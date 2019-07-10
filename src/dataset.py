@@ -38,6 +38,9 @@ class LootDataset(Dataset):
         self.__y_res = x_res if y_res is None else y_res
         # read file with dataframe
         self.df = pd.read_csv(file_path, delimiter='\t')
+        # some events are missed
+        # if not factorized, there will be empty events
+        self.df.event = pd.factorize(self.df.event)[0]
         
         if n_stations is None:
             self.n_stations = self.df.station.nunique()
