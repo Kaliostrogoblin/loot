@@ -30,7 +30,8 @@ class Loot(nn.Module):
         x = self.cnn4(x)
         # residual connection
         logits = self.out_probs(x)+inputs[:, :1, :, :]
-        shifts = torch.tanh(self.out_shifts(x))
+        # also resodual connection
+        shifts = torch.tanh(self.out_shifts(x)*inputs[:, :1, :, :])
         outputs = torch.cat([logits, shifts], 1)
         return outputs
         
