@@ -29,9 +29,9 @@ class Loot(nn.Module):
         x = self.cnn3(x)
         x = self.cnn4(x)
         # residual connection
-        probs = torch.sigmoid(self.out_probs(x)+inputs[:, :1, :, :])
+        logits = self.out_probs(x)+inputs[:, :1, :, :]
         shifts = self.out_shifts(x)
-        outputs = torch.cat([probs, shifts], 1)
+        outputs = torch.cat([logits, shifts], 1)
         return outputs
         
         
