@@ -1,6 +1,4 @@
 import torch
-
-from torch.functional import F
 from torch import nn
 
 from .conv_coord import AddCoords
@@ -31,7 +29,7 @@ class Loot(nn.Module):
         x = self.cnn3(x)
         x = self.cnn4(x)
         # residual connection
-        probs = F.sigmoid(self.out_probs(x)+inputs[:, :1, :, :])
+        probs = torch.sigmoid(self.out_probs(x)+inputs[:, :1, :, :])
         shifts = self.out_shifts(x)
         outputs = torch.cat([probs, shifts], 1)
         return outputs
