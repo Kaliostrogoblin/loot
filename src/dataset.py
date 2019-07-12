@@ -30,13 +30,15 @@ class LootDataset(Dataset):
                  y_min, 
                  x_res,
                  y_res=None,
-                 n_stations=None):
+                 n_stations=None,
+                 shifts_rescale=True):
         self.__x_max = x_max
         self.__x_min = x_min
         self.__y_max = y_max
         self.__y_min = y_min
         self.__x_res = x_res
         self.__y_res = x_res if y_res is None else y_res
+        self.shifts_rescale = shifts_rescale
         # read file with dataframe
         self.df = pd.read_csv(file_path, delimiter='\t')
         # some events are missed
@@ -167,14 +169,20 @@ class LootDataset(Dataset):
             rsuffix='_start',
             how='right')
         # calculate shifts with respect of the start point
-        tracks_df['xshift'] = tracks_df.xpix - tracks_df.xpix_start
-        tracks_df['yshift'] = tracks_df.ypix - tracks_df.ypix_start
+        tracks_df['xshift'] = (tracks_df.xpix - tracks_df.xpix_start).astype('float')
+        tracks_df['yshift'] = (tracks_df.ypix - tracks_df.ypix_start).astype('float')
+
+        if self.shifts_rescale:
+            # rescale shifts in range from -1 to 1
+            tracks_df['xshift'] = tracks_df['xshift'] / (self.x_res-1) * 2 - 1
+            tracks_df['yshift'] = tracks_df['yshift'] / (self.y_res-1) * 2 - 1
+
         # create the array for shifts
         self.n_shifts = (self.n_stations-1)*2
         # depth dimension
         self.y_ddim = self.n_shifts + 1
         res_arr = np.zeros((self.y_res, self.x_res, self.y_ddim), 
-                            dtype=np.int32)
+                            dtype=np.float32)
         # fill the array with computed shifts
         # y shifts
         res_arr[tracks_df.ypix_start, 
@@ -228,7 +236,7 @@ class LootDataset(Dataset):
         y = self.start_points_xy_shifts(event)
         # dense representation
         X = np.zeros((self.y_res, self.x_res, self.n_stations), 
-                     dtype=np.int8)
+                     dtype=np.float32)
         # 1 - because hits and fakes are the same at the input
         X[event.ypix, event.xpix, event.station] = 1
         return X, y
