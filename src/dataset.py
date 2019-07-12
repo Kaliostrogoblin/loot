@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import torch
 
 from torch.utils.data import Dataset
 
@@ -231,3 +232,15 @@ class LootDataset(Dataset):
         # 1 - because hits and fakes are the same at the input
         X[event.ypix, event.xpix, event.station] = 1
         return X, y
+
+
+def collate_fn(batch):
+    '''This function prepares batches 
+    to be fed as inputs to the network'''
+    x, y = zip(*batch)
+    x = torch.from_numpy(np.asarray(x))
+    y = torch.from_numpy(np.asarray(y))
+    # channels first
+    x = x.permute(0, 3, 1, 2)
+    y = y.permute(0, 3, 1, 2)
+    return x, y
