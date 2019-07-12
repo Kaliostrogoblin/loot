@@ -23,7 +23,7 @@ class ShiftsMSELoss(torch.nn.Module):
 class LootLoss(torch.nn.Module):
     def __init__(self):
         super(LootLoss, self).__init__()
-        self.probs_loss = torch.nn.BCEWithLogitsLoss()
+        self.probs_loss = torch.nn.BCELoss()
         self.shifts_loss = ShiftsMSELoss()
 
     def forward(self, inputs, target):

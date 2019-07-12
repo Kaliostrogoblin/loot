@@ -1,3 +1,4 @@
+from torch import functional as F
 from torch import nn
 
 from .conv_coord import AddCoords
@@ -17,7 +18,8 @@ class Loot(nn.Module):
         self.cnn2 = self.simple_conv_block(32, 32, 9)
         self.cnn3 = self.simple_conv_block(32, 64, 9)
         self.cnn4 = self.simple_conv_block(64, 64, 9)
-        self.out = nn.Conv2d(64, self.n_stations*2-1, 1)
+        self.out_probs = nn.Conv2d(64, 1, 1)
+        self.out_shifts = nn.Conv2d(64, (self.n_stations-1)*2, 1)
         
         
     def forward(self, inputs):
@@ -26,7 +28,10 @@ class Loot(nn.Module):
         x = self.cnn2(x)
         x = self.cnn3(x)
         x = self.cnn4(x)
-        outputs = self.out(x)
+        # residual connection
+        probs = F.sigmoid(self.out_probs(x)+inputs[:, :1, :, :])
+        shifts = self.out_shifts(x)
+        outputs = torch.cat([probs, shifts], 1)
         return outputs
         
         
