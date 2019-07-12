@@ -20,10 +20,27 @@ class ShiftsMSELoss(torch.nn.Module):
         return loss
 
 
+class FakesLoss(torch.nn.Module):
+    def __init__(self):
+        super(FakesLoss, self).__init__()
+        self.bce_loss = torch.nn.BCELoss()
+
+    def forward(self, inputs, target):
+        true_mask = target[:, 0]
+        pred_mask = inputs[:, 0]
+        # find outputs predicted as true tracks
+        nz_idx = torch.nonzero(pred_mask)
+        # extract corresponding cells' values
+        y_true = true_mask[nz_idx[:, 0], nz_idx[:, 1], nz_idx[:, 2]]
+        y_pred = pred_mask[nz_idx[:, 0], nz_idx[:, 1], nz_idx[:, 2]]
+        return self.bce_loss(y_pred, y_true)
+
+
+
 class LootLoss(torch.nn.Module):
     def __init__(self):
         super(LootLoss, self).__init__()
-        self.probs_loss = torch.nn.BCEWithLogitsLoss()
+        self.probs_loss = FakesLoss()
         self.shifts_loss = ShiftsMSELoss()
 
     def forward(self, inputs, target):

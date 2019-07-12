@@ -29,10 +29,13 @@ class Loot(nn.Module):
         x = self.cnn3(x)
         x = self.cnn4(x)
         # residual connection
-        logits = self.out_probs(x)+inputs[:, :1, :, :]
+        probs = self.out_probs(x)+inputs[:, :1, :, :]
+        probs = torch.sigmoid(probs)
         # also resodual connection
-        shifts = torch.tanh(self.out_shifts(x)*inputs[:, :1, :, :])
-        outputs = torch.cat([logits, shifts], 1)
+        shifts = self.out_shifts(x)*inputs[:, :1, :, :]
+        shifts = torch.tanh(shifts)
+        # concatenate
+        outputs = torch.cat([probs, shifts], 1)
         return outputs
         
         
