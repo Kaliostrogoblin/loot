@@ -1,4 +1,4 @@
-from torch import functional as F
+from torch.functional import F
 from torch import nn
 
 from .conv_coord import AddCoords
