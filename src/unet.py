@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from conv_coord import AddCoords
+from src.conv_coord import AddCoords
 
 
 class UnetLoot(nn.Module):

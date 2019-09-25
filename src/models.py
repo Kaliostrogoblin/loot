@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from .conv_coord import AddCoords
+from src.conv_coord import AddCoords
 
 
 class Loot(nn.Module):
