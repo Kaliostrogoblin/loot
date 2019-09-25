@@ -1,7 +1,8 @@
 import torch
+import torch.nn as nn
 
 
-class AddCoords(torch.nn.Module):
+class AddCoords(nn.Module):
     def __init__(self, radius_channel=False):
         super(AddCoords, self).__init__()
         self.radius_channel = radius_channel
