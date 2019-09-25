@@ -35,7 +35,7 @@ class UnetLoot(nn.Module):
         self.up5 = UpScale(64, 32)
         # output (all shifts for x and y and probabilities)
         self.out_channels = (self.n_stations-1)*2+1
-        self.out = OutConv(32, self.out_channels)
+        self.out = OutConv(32, 1)#self.out_channels)
 
     def forward(self, x):
         x_in = self.add_coords(x)
@@ -128,10 +128,11 @@ class OutConv(nn.Module):
 
     def forward(self, x):
         x = self.conv(x)
+        return torch.sigmoid(x)
         # split on probabilities and shifts
-        probs = torch.sigmoid(x[:, :1])
-        shifts = torch.tanh(x[:, 1:])
-        return torch.cat([probs, shifts], 1)
+        # probs = torch.sigmoid(x[:, :1])
+        # shifts = torch.tanh(x[:, 1:])
+        # return torch.cat([probs, shifts], 1)
 
 
 if __name__ == "__main__":
