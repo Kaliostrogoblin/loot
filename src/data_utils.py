@@ -13,7 +13,7 @@ def read_datadir(path_to_dir, file_ext='tsv', delimiter='\t', **kwargs):
     list_of_dfs = [None]*len(data_file_names)
 
     for i, fname in enumerate(data_file_names):
-        print('%d/%d: %s' % (i, len(data_file_names), fname))
+        print('%d/%d: %s' % (i+1, len(data_file_names), fname))
         df = pd.read_csv(fname, delimiter=delimiter)
         list_of_dfs[i] = get_events_with_tracklen_equal_to(df, **kwargs)
 
@@ -35,7 +35,7 @@ def concat_multiple_dataframes(list_of_dfs):
     n_events = 0
     for i in range(len(list_of_dfs)):
         print('%d/%d: Number of events - %d' % 
-                (i, len(list_of_dfs), list_of_dfs[i].event.nunique()))
+                (i+1, len(list_of_dfs), list_of_dfs[i].event.nunique()))
         new_event_ids, uniq_events = pd.factorize(list_of_dfs[i].event)
         list_of_dfs[i].loc[:, 'event'] = new_event_ids + n_events
         n_events += len(uniq_events)
