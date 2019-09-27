@@ -23,9 +23,14 @@ def precision(y_pred, y_true):
     pred_probs = (pred_probs > 0.5).float()
     # find cells predicted as true tracks
     nz_idx = torch.nonzero(pred_probs)
+    N = len(nz_idx)
+    
+    if N == 0:
+        # zero precision
+        return N
+      
     # how much of them are really true tracks
     tp = true_probs[nz_idx[:, 0], nz_idx[:, 1], nz_idx[:, 2]].sum()
-    N = len(nz_idx)
     return (tp / N).item()
 
 
