@@ -1,6 +1,6 @@
 import torch 
 
-def shifts_squared_loss(y_true, y_pred):
+def shifts_squared_loss(y_pred, y_true):
     true_shifts = y_true[:, 1:]
     pred_shifts = y_pred[:, 1:]
     # find nonzero cells for true tracks
@@ -16,7 +16,7 @@ def shifts_squared_loss(y_true, y_pred):
     return loss.item()
 
 
-def precision(y_true, y_pred):
+def precision(y_pred, y_true):
     true_probs = y_true[:, 0]
     pred_probs = y_pred[:, 0]
     # threshold predicted probabilities
@@ -29,7 +29,7 @@ def precision(y_true, y_pred):
     return (tp / N).item()
 
 
-def recall(y_true, y_pred):
+def recall(y_pred, y_true):
     true_probs = y_true[:, 0]
     pred_probs = y_pred[:, 0]
     # threshold predicted probabilities
@@ -40,3 +40,9 @@ def recall(y_true, y_pred):
     tp = pred_probs[nz_idx[:, 0], nz_idx[:, 1], nz_idx[:, 2]].sum()
     N = len(nz_idx)
     return (tp / N).item()
+
+
+def nonzero_preds(y_pred, y_true):
+    pred_probs = y_pred[:, 0]
+    pred_probs = (pred_probs > 0.5).float().sum()
+    return pred_probs.item()
