@@ -7,8 +7,8 @@ detector:
     y_res: 256
     n_stations: 6
 data:
-    train_dataset: 'd:/DATASETS/NeuralTracking/CC4GeVmb_550K/train.tsv'
-    val_dataset: 'd:/DATASETS/NeuralTracking/CC4GeVmb_550K/test.tsv'
+    train_dataset: 'train.tsv'
+    val_dataset: 'test.tsv'
     batch_size: 32
     num_workers: 4
     shifts_rescale: True
