@@ -23,7 +23,7 @@ class Trainer(object):
                  max_iter=1e99):
         
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.model = model
+        self.model = model.to(device)
         self.optimizer = optimizer
         self.criterion = criterion
         self.train_dataloader = train_dataloader
