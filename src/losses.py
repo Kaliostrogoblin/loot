@@ -96,6 +96,6 @@ class LootLoss(nn.Module):
 
     def forward(self, inputs, target):
         probs_loss_value = self.probs_loss(inputs[:, 0], target[:, 0]) * self.lambda1
-        #shifts_loss_value = self.shifts_loss(inputs, target) * self.lambda2
-        return probs_loss_value #+ shifts_loss_value
+        shifts_loss_value = self.shifts_loss(inputs, target) * self.lambda2
+        return probs_loss_value + shifts_loss_value
     
