@@ -4,6 +4,25 @@ import time
 import sys
 
 
+class AttributeDict(dict):
+    """
+    Dictionary whose keys can be accessed as attributes.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(AttributeDict, self).__init__(*args, **kwargs)
+
+    def __getattr__(self, item):
+        if item not in self:
+            return None
+        if type(self[item]) is dict:
+            self[item] = AttributeDict(self[item])
+        return self[item]
+
+    def __setattr__(self, item, value):
+        self[item] = value
+
+
 class Progbar(object):
     """Displays a progress bar.
     # Arguments
