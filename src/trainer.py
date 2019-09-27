@@ -82,6 +82,7 @@ class Trainer(object):
                 self.lr_scheduler.step()
             current_lr = self.lr_scheduler.get_lr()
             print('Epoch: %d, lr - %.4f' % (self.epoch+1, current_lr[-1]))
+            self.refresh_metrics()
             should_terminate = self.training_phase(self.train_dataloader)
 
             if self.val_dataloader is not None:
@@ -103,7 +104,6 @@ class Trainer(object):
 
     def training_phase(self, dataloader):
         self.model.train()
-        self.refresh_metrics()
         train_iter = 0
         phase = 'train'
 
