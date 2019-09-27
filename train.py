@@ -78,7 +78,7 @@ def main():
                       is_ReduceLRonPlateau=config.training.reduceLRonPlateau)
 
     print('Training')
-    #trainer.train()
+    trainer.train()
 
 
 if __name__ == "__main__":
