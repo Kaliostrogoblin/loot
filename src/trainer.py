@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+import time
 import os
 
 from tensorboardX import SummaryWriter
@@ -53,7 +54,7 @@ class Trainer(object):
 
 
     def init_training(self):
-        self._metrics_names = ['train_loss', 'time']
+        self._metrics_names = ['train_loss']
 
         if self.metrics is not None:
             self._metrics_names.extend(['train_%s' % x.__name__ for x in self.metrics])
