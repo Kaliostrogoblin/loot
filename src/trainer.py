@@ -54,6 +54,7 @@ class Trainer(object):
 
 
     def init_training(self):
+        self.iter = 0
         self._metrics_names = ['train_loss']
 
         if self.metrics is not None:
