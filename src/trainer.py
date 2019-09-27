@@ -83,10 +83,10 @@ class Trainer(object):
             current_lr = self.lr_scheduler.get_lr()
             print('Epoch: %d, lr - %.4f' % (self.epoch+1, current_lr[-1]))
             self.refresh_metrics()
-            should_terminate = self.training_phase(self.train_dataloader)
+            should_terminate = self.training_phase()
 
             if self.val_dataloader is not None:
-                self.validating_phase(self.val_dataloader)
+                self.validating_phase()
 
             if (self.iter % self.ckpt_frequency) == 0:
                 checkpoint_name = os.path.join(self.checkpoint_dir, 'iter_' + str(self.iter) + '.pth')
