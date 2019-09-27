@@ -102,12 +102,12 @@ class Trainer(object):
         self.writer.close()
 
 
-    def training_phase(self, dataloader):
+    def training_phase(self):
         self.model.train()
         train_iter = 0
         phase = 'train'
 
-        for inputs, targets in dataloader:
+        for inputs, targets in self.train_dataloader:
             self.optimizer.zero_grad()
             self.iter += 1
             train_iter += 1
@@ -130,12 +130,12 @@ class Trainer(object):
         return False
         
 
-    def validating_phase(self, dataloader):
+    def validating_phase(self):
         self.model.eval()
         phase = 'val'
         val_iter = 0
         with torch.no_grad():
-            for inputs, targets in dataloader:
+            for inputs, targets in self.val_dataloader:
                 val_iter += 1
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 outputs = self.model(inputs)
