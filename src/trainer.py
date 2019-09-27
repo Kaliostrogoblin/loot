@@ -76,6 +76,7 @@ class Trainer(object):
 
     
     def train(self):
+        self.init_training()
         for self.epoch in range(self.start_epoch, self.max_epochs):
             if not self.is_ReduceLRonPlateau:
                 self.lr_scheduler.step()
