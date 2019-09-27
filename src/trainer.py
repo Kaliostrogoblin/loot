@@ -78,14 +78,16 @@ class Trainer(object):
     
     def train(self):
         self.init_training()
+        
         for self.epoch in range(self.start_epoch, self.epochs):
+            print('Epoch: %d' % self.epoch + 1)
 
             if self.lr_scheduler is not None:
                 if not self.is_ReduceLRonPlateau:
                     self.lr_scheduler.step()
                 current_lr = self.lr_scheduler.get_lr()
+                print('Current learning rate: %.6f' % current_lr[-1])
 
-            print('Epoch: %d, lr - %.4f' % (self.epoch+1, current_lr[-1]))
             self.refresh_metrics()
             should_terminate = self.training_phase()
 
