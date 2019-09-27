@@ -111,6 +111,8 @@ class Trainer(object):
             self.optimizer.zero_grad()
             self.iter += 1
             train_iter += 1
+            if train_iter == 2:
+                break
 
             inputs, targets = inputs.to(self.device), targets.to(self.device)
 
@@ -137,6 +139,9 @@ class Trainer(object):
         with torch.no_grad():
             for inputs, targets in self.val_dataloader:
                 val_iter += 1
+                if val_iter == 2:
+                    break
+
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 outputs = self.model(inputs)
                 loss = self.criterion(outputs, targets)
