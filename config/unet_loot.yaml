@@ -1,0 +1,29 @@
+detector:
+    x_min: -73.8
+    x_max: 81.6
+    y_min: -29.4
+    y_max: 16.2
+    x_res: 512
+    y_res: 256
+    n_stations: 6
+data:
+    train_dataset: 'd:/DATASETS/NeuralTracking/CC4GeVmb_550K/train.tsv'
+    val_dataset: 'd:/DATASETS/NeuralTracking/CC4GeVmb_550K/test.tsv'
+    batch_size: 32
+    num_workers: 4
+    shifts_rescale: True
+model:
+    type: 'unet'
+    use_radius: True
+criterion:
+    lambda1: 0.5
+    lambda2: 1
+optimizer:
+    type: 'sgd'
+    lr: 0.01
+    momentum: 0.9
+training:
+    random_seed: 13
+    epochs: 1000
+    checkpoint_freq: 3
+    reduceLRonPlateau: True
