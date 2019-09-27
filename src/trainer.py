@@ -74,10 +74,6 @@ class Trainer(object):
             if self.metrics is not None:
                 self._metrics_names.extend(['val_%s' % x.__name__ for x in self.metrics])
 
-        self.progbar = Progbar(
-            target=len(self.train_dataloader.dataset), 
-            stateful_metrics=self._metrics_names)
-
 
     def refresh_metrics(self):
         for metric_name in self._metrics_names:
@@ -89,6 +85,9 @@ class Trainer(object):
         
         for self.epoch in range(self.start_epoch, self.epochs):
             print('\nEpoch: {}'.format(self.epoch + 1))
+            self.progbar = Progbar(
+                target=len(self.train_dataloader.dataset), 
+                stateful_metrics=self._metrics_names)
 
             if self.lr_scheduler is not None:
                 if not self.is_ReduceLRonPlateau:
