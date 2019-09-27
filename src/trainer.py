@@ -155,7 +155,7 @@ class Trainer(object):
                 loss = self.criterion(outputs, targets)
                 self.val_loss += loss.item() 
                 self.calculate_metrics(outputs, targets, phase)  
-                self.update_summary_and_progbar(val_iter, phase) 
+        self.update_summary_and_progbar(val_iter, phase) 
 
 
     def calculate_metrics(self, outputs, targets, phase):
