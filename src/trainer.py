@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch
+import random
 import time
 import os
 
@@ -20,11 +21,12 @@ class Trainer(object):
                  ckpt_frequency=None,
                  checkpoint_dir='ckpt', 
                  is_ReduceLRonPlateau=False,
+                 random_seed=None,
                  start_epoch=0,
                  max_iter=1e99):
         
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.model = model.to(device)
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.model = model.to(self.device)
         self.optimizer = optimizer
         self.criterion = criterion
         self.train_dataloader = train_dataloader
@@ -42,7 +44,12 @@ class Trainer(object):
         self.lr_scheduler = lr_scheduler
         self.ckpt_frequency = ckpt_frequency
         self.checkpoint_dir = checkpoint_dir
-        self.is_ReduceLRonPlateau = is_ReduceLRonPlateau,
+        self.is_ReduceLRonPlateau = is_ReduceLRonPlateau
+        
+        if random_seed is None:
+            random_seed = random.randint(0, 1000)
+            
+        self.random_seed = random_seed      
         self.start_epoch = start_epoch
         self.max_iter = max_iter
 
@@ -54,6 +61,7 @@ class Trainer(object):
 
 
     def init_training(self):
+        torch.manual_seed(self.random_seed)
         self.iter = 0
         self._metrics_names = ['train_loss']
 
@@ -80,7 +88,7 @@ class Trainer(object):
         self.init_training()
         
         for self.epoch in range(self.start_epoch, self.epochs):
-            print('Epoch: %d' % self.epoch + 1)
+            print('\nEpoch: {}'.format(self.epoch + 1))
 
             if self.lr_scheduler is not None:
                 if not self.is_ReduceLRonPlateau:
@@ -95,8 +103,7 @@ class Trainer(object):
                 self.validating_phase()
 
             if (self.iter % self.ckpt_frequency) == 0:
-                checkpoint_name = os.path.join(self.checkpoint_dir, 'iter_' + str(self.iter) + '.pth')
-                torch.save(self.model, checkpoint_name)
+                self.save_checkpoint()
 
             if should_terminate:
                 print('Maximum number of iterations %d exceeded. Finishing training...' % self.max_iter)
@@ -182,3 +189,21 @@ class Trainer(object):
                 self.writer.add_scalar(scalar_name, metric_val, self.iter)
         # update progbar
         self.progbar.update(current_step*self.batch_size, values=progbar_update_vals)
+        
+        
+    def generate_model_name(self):
+        model_name = 'rs[%d]_iter[%d]_bz[%d]' % (self.random_seed, self.iter, self.batch_size)
+        
+        for metric_name in self._metrics_names:
+            if metric_name.startswith('val_'):
+                metric_val = getattr(self, metric_name) / self.val_batches
+                str_to_add = '%s{%.4f}' % (metric_name[4:], metric_val)
+                model_name = '_'.join([model_name, str_to_add])
+        
+        model_name = '.'.join([model_name, 'pth'])
+        return model_name
+        
+        
+    def save_checkpoint(self):
+        checkpoint_name = os.path.join(self.checkpoint_dir, self.generate_model_name())
+        torch.save(self.model, checkpoint_name) 
