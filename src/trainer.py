@@ -79,9 +79,12 @@ class Trainer(object):
     def train(self):
         self.init_training()
         for self.epoch in range(self.start_epoch, self.epochs):
-            if not self.is_ReduceLRonPlateau:
-                self.lr_scheduler.step()
-            current_lr = self.lr_scheduler.get_lr()
+
+            if self.lr_scheduler is not None:
+                if not self.is_ReduceLRonPlateau:
+                    self.lr_scheduler.step()
+                current_lr = self.lr_scheduler.get_lr()
+
             print('Epoch: %d, lr - %.4f' % (self.epoch+1, current_lr[-1]))
             self.refresh_metrics()
             should_terminate = self.training_phase()
@@ -96,8 +99,8 @@ class Trainer(object):
             if should_terminate:
                 print('Maximum number of iterations %d exceeded. Finishing training...' % self.max_iter)
                 break
-
-            if self.is_ReduceLRonPlateau:
+            
+            if self.is_ReduceLRonPlateau and self.lr_scheduler is not None:
                 self.lr_scheduler.step(self.val_loss)
 
         self.writer.close()
